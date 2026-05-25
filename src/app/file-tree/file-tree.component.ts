@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { FileNode } from '../models/file-node.model';
+import { TreeService } from '../services/tree.service';
 
 @Component({
   selector: 'app-file-tree',
@@ -12,26 +13,34 @@ import { FileNode } from '../models/file-node.model';
 })
 export class FileTreeComponent {
   @Input() nodes: FileNode[] = [];
-  @Output() nodesChange = new EventEmitter<FileNode[]>();
+  @Output() treeChanged = new EventEmitter<void>();
 
-  drop(event: CdkDragDrop<FileNode[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
+  private treeService = inject(TreeService);
+
+  // Decoupled drop handler - delegates move to TreeService
+  drop(event: CdkDragDrop<FileNode[]>, targetParentId: string | null = null) {
+    const draggedNode = event.item.data as FileNode;
+    if (!draggedNode) return;
+
+    const previousIndex = event.previousIndex;
+    const currentIndex = event.currentIndex;
+
+    // Use service for the actual move/reorder logic (decoupled)
+    const success = this.treeService.moveNode(
+      draggedNode.id,
+      targetParentId,
+      currentIndex
+    );
+
+    if (success) {
+      this.treeChanged.emit();
     }
-    this.nodesChange.emit(this.nodes);
   }
 
   toggleExpand(node: FileNode) {
-    if (node.type === 'folder') {
-      node.expanded = !node.expanded;
-    }
+    this.treeService.toggleExpand(node.id);
+    // Persist expanded state so it survives refresh
+    this.treeService.saveTree().subscribe();
   }
 
   getFileIcon(node: FileNode): string {
@@ -46,6 +55,7 @@ export class FileTreeComponent {
     return icons[ext] || '📄';
   }
 
+  // Improved path computation (context aware for recursion)
   getFullPath(node: FileNode, parentPath: string = ''): string {
     const current = parentPath ? `${parentPath}/${node.name}` : node.name;
     return current;

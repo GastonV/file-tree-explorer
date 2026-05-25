@@ -1,0 +1,62 @@
+.file-tree {
+  font-family: 'Inter', sans-serif;
+}
+
+.tree-node {
+  margin-left: 1rem;
+  border-left: 1px solid #ddd;
+  padding-left: 0.5rem;
+}
+
+.node-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  cursor: grab;
+  border-radius: 4px;
+  transition: background 0.2s;
+  
+  &:hover {
+    background: #f5f5f5;
+  }
+  
+  cdk-drag-preview {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+}
+
+.toggle {
+  cursor: pointer;
+  width: 1rem;
+  display: inline-block;
+}
+
+.icon {
+  font-size: 1rem;
+}
+
+.name {
+  font-weight: 500;
+}
+
+.extension {
+  color: #666;
+  font-size: 0.85em;
+}
+
+.path {
+  color: #888;
+  font-size: 0.75em;
+  margin-left: auto;
+}
+
+.size {
+  color: #999;
+  font-size: 0.75em;
+}
+
+.children {
+  margin-left: 1.5rem;
+}

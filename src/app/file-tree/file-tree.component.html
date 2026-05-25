@@ -1,0 +1,38 @@
+<div class="file-tree" cdkDropListGroup>
+  @for (node of nodes; track trackById($index, node)) {
+    <div 
+      class="tree-node"
+      cdkDropList
+      [cdkDropListData]="node.children || []"
+      (cdkDropListDropped)="drop($event, node.type === 'folder' ? node.id : null)">
+      
+      <div 
+        class="node-content"
+        cdkDrag
+        [cdkDragData]="node">
+        
+        <span class="toggle" *ngIf="node.type === 'folder'" (click)="toggleExpand(node)">
+          {{ node.expanded ? '▼' : '▶' }}
+        </span>
+        <span class="icon">{{ getFileIcon(node) }}</span>
+        <span class="name">{{ node.name }}</span>
+        <span class="extension" *ngIf="node.extension">.{{ node.extension }}</span>
+        <span class="path" *ngIf="node.type === 'file'">{{ getFullPath(node) }}</span>
+        <span class="size" *ngIf="node.size">({{ node.size }} bytes)</span>
+      </div>
+
+      <!-- Recursive children for arbitrary depth folders -->
+      @if (node.type === 'folder' && node.expanded && node.children) {
+        <div class="children"
+             cdkDropList
+             [cdkDropListData]="node.children"
+             (cdkDropListDropped)="drop($event, node.id)">
+          <app-file-tree 
+            [nodes]="node.children" 
+            (treeChanged)="treeChanged.emit()">
+          </app-file-tree>
+        </div>
+      }
+    </div>
+  }
+</div>
