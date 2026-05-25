@@ -6,19 +6,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Angular Material theme (Indigo/Pink) */
+/* Angular Material theming (modern API) */
 @include mat.core();
 
-$indigo-pink-theme: mat.define-light-theme((
-  color: (
-    primary: mat.define-palette(mat.$indigo-palette),
-    accent: mat.define-palette(mat.$pink-palette),
-  ),
-  typography: mat.define-typography-config(),
-  density: 0,
-));
-
-@include mat.all-component-themes($indigo-pink-theme);
+html {
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$rose-palette,
+      tertiary: mat.$azure-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
 
 /* Custom app styles */
 body {
