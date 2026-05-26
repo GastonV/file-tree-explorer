@@ -24,6 +24,7 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "outputPath": "dist/file-tree-explorer",
             "assets": [
               {
                 "glob": "**/*",
@@ -72,7 +73,11 @@
           "builder": "@angular/build:unit-test"
         },
         "deploy": {
-          "builder": "angular-cli-ghpages:deploy"
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {
+            "baseHref": "/file-tree-explorer/",
+            "noSilent": true
+          }
         }
       }
     }
