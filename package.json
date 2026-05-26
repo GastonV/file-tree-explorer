@@ -6,7 +6,8 @@
     "start": "NODE_NO_WARNINGS=1 ng serve",
     "build": "NODE_NO_WARNINGS=1 ng build",
     "watch": "NODE_NO_WARNINGS=1 ng build --watch --configuration development",
-    "test": "NODE_NO_WARNINGS=1 ng test"
+    "test": "NODE_NO_WARNINGS=1 ng test",
+    "deploy": "ng deploy --base-href=/file-tree-explorer/ --no-silent"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
