@@ -12,8 +12,10 @@
         class="node-content"
         cdkDrag
         [cdkDragData]="node"
-        role="presentation">
+        role="presentation"
+        (dblclick)="startRename(node)">
         
+        <!-- Toggle -->
         <button 
           *ngIf="node.type === 'folder'" 
           class="toggle"
@@ -22,15 +24,65 @@
           <mat-icon>{{ getToggleIcon(node) }}</mat-icon>
         </button>
 
-        <mat-icon class="icon" aria-hidden="true">{{ getFileIcon(node) }}</mat-icon>
+        <!-- Icon -->
+        <mat-icon 
+          class="icon" 
+          [style.color]="getFileIcon(node).color"
+          aria-hidden="true">
+          {{ getFileIcon(node).icon }}
+        </mat-icon>
 
-        <span class="name">{{ node.name }}</span>
-        <span class="extension" *ngIf="node.extension">.{{ node.extension }}</span>
-        <span class="path" *ngIf="node.type === 'file'">{{ getFullPath(node) }}</span>
-        <span class="size" *ngIf="node.size">({{ node.size }} bytes)</span>
+        <!-- Rename Input -->
+        @if (renamingNodeId() === node.id) {
+          <input 
+            class="rename-input"
+            [value]="renameValue()"
+            (input)="renameValue.set($any($event.target).value)"
+            (keydown.enter)="saveRename()"
+            (keydown.escape)="cancelRename()"
+            (blur)="saveRename()"
+            autofocus>
+        } @else {
+          <span class="name">{{ node.name }}</span>
+          <span class="extension" *ngIf="node.extension">.{{ node.extension }}</span>
+        }
+
+        <!-- Path & Size -->
+        @if (renamingNodeId() !== node.id) {
+          <span class="path" *ngIf="node.type === 'file'">{{ getFullPath(node) }}</span>
+          <span class="size" *ngIf="node.size">({{ node.size }} bytes)</span>
+        }
+
+        <!-- Actions -->
+        @if (renamingNodeId() !== node.id) {
+          <div class="actions">
+            @if (node.type === 'folder') {
+              <button class="action-btn" (click)="startCreating(node.id, 'file', $event)" title="Add file">+📄</button>
+              <button class="action-btn" (click)="startCreating(node.id, 'folder', $event)" title="Add folder">+📁</button>
+            }
+            <button class="action-btn" (click)="startRename(node, $event)" title="Rename">✏️</button>
+            <button class="action-btn delete" (click)="deleteNode(node, $event)" title="Delete">🗑</button>
+          </div>
+        }
       </div>
 
-      <!-- Recursive children for arbitrary depth folders -->
+      <!-- Inline Creation Input -->
+      @if (creatingInParentId() === node.id) {
+        <div class="inline-create">
+          <mat-icon class="icon">{{ creatingType() === 'folder' ? 'folder' : 'insert_drive_file' }}</mat-icon>
+          <input 
+            class="create-input"
+            [placeholder]="creatingType() === 'file' ? 'filename.ext' : 'folder name'"
+            [value]="newItemName()"
+            (input)="newItemName.set($any($event.target).value)"
+            (keydown.enter)="confirmCreate()"
+            (keydown.escape)="cancelCreate()"
+            (blur)="confirmCreate()"
+            autofocus>
+        </div>
+      }
+
+      <!-- Children -->
       @if (node.type === 'folder' && node.expanded && node.children) {
         <div class="children"
              role="group"

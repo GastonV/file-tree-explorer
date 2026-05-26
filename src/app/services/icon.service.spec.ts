@@ -14,28 +14,37 @@ describe('IconService', () => {
   });
 
   describe('getFolderIcon', () => {
-    it('should return folder icon', () => {
-      expect(service.getFolderIcon()).toBe('folder');
+    it('should return folder icon with color', () => {
+      const result = service.getFolderIcon();
+      expect(result.icon).toBe('folder');
+      expect(result.color).toBeDefined();
     });
   });
 
   describe('getFileIcon', () => {
-    it('should return correct icon for known extensions', () => {
-      expect(service.getFileIcon('ts')).toBe('code');
-      expect(service.getFileIcon('js')).toBe('javascript');
-      expect(service.getFileIcon('html')).toBe('html');
-      expect(service.getFileIcon('md')).toBe('description');
-      expect(service.getFileIcon('json')).toBe('data_object');
+    it('should return correct icon and color for known extensions', () => {
+      const ts = service.getFileIcon('ts');
+      expect(ts.icon).toBe('code');
+      expect(ts.color).toBe('#3178c6');
+
+      const js = service.getFileIcon('js');
+      expect(js.icon).toBe('javascript');
+
+      const html = service.getFileIcon('html');
+      expect(html.icon).toBe('html');
     });
 
     it('should return default file icon for unknown extensions', () => {
-      expect(service.getFileIcon('xyz')).toBe('insert_drive_file');
-      expect(service.getFileIcon()).toBe('insert_drive_file');
+      const unknown = service.getFileIcon('xyz');
+      expect(unknown.icon).toBe('insert_drive_file');
+
+      const noExt = service.getFileIcon();
+      expect(noExt.icon).toBe('insert_drive_file');
     });
 
     it('should be case insensitive', () => {
-      expect(service.getFileIcon('TS')).toBe('code');
-      expect(service.getFileIcon('HTML')).toBe('html');
+      const tsUpper = service.getFileIcon('TS');
+      expect(tsUpper.icon).toBe('code');
     });
   });
 

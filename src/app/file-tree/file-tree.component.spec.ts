@@ -43,12 +43,14 @@ describe('FileTreeComponent', () => {
     expect(compiled.textContent).toContain('style.css');
   });
 
-  it('should return correct icon for folders and files via getFileIcon()', () => {
+  it('should return correct icon object for folders and files via getFileIcon()', () => {
     const folderIcon = component.getFileIcon(mockNodes[0]);
     const fileIcon = component.getFileIcon(mockNodes[0].children![0]);
 
-    expect(folderIcon).toBe('folder');
-    expect(fileIcon).toBe('code'); // .ts maps to 'code'
+    expect(folderIcon.icon).toBe('folder');
+    expect(fileIcon.icon).toBe('code');
+    expect(folderIcon.color).toBeDefined();
+    expect(fileIcon.color).toBeDefined();
   });
 
   it('should return correct toggle icon based on expanded state', () => {

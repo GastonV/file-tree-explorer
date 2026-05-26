@@ -24,4 +24,15 @@ export class App {
   onTreeChanged() {
     this.treeService.saveTree().subscribe();
   }
+
+  // Use the improved method from the tree component via service for now
+  addRootNode(type: 'file' | 'folder') {
+    const name = prompt(`Enter ${type} name:`);
+    if (!name) return;
+
+    const success = this.treeService.addNode(null, name, type);
+    if (success) {
+      this.treeService.saveTree().subscribe();
+    }
+  }
 }

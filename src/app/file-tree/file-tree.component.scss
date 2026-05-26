@@ -46,7 +46,6 @@
   font-size: 1.15rem;
   width: 1.15rem;
   height: 1.15rem;
-  color: #555;
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
@@ -74,6 +73,56 @@
   color: #999;
   font-size: 0.72em;
   margin-left: 0.25rem;
+}
+
+.actions {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.node-content:hover .actions {
+  opacity: 1;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 1px 5px;
+  border-radius: 4px;
+  line-height: 1;
+
+  &:hover {
+    background: #eee;
+  }
+
+  &.delete:hover {
+    background: #ffebee;
+    color: #c62828;
+  }
+}
+
+.rename-input,
+.create-input {
+  flex: 1;
+  padding: 2px 6px;
+  font-size: 0.95rem;
+  border: 1px solid #1976d2;
+  border-radius: 3px;
+  outline: none;
+  background: white;
+}
+
+.inline-create {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem 0.25rem 2.5rem;
+  margin-left: 1rem;
 }
 
 .children {

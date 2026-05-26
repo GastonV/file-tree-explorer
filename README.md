@@ -1,59 +1,80 @@
-# FileTreeExplorer
+# File Tree Explorer
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.12.
+A modern, interactive hierarchical file explorer built with **Angular 21** and **Angular Material**.
 
-## Development server
+Inspired by IDE file explorers (VS Code, WebStorm), this component supports:
 
-To start a local development server, run:
+- Hierarchical tree rendering with arbitrary depth
+- Expand / collapse folders
+- Add new files and folders (inline)
+- Rename files and folders (inline)
+- Delete files and folders
+- Drag & drop to move and reorder
+- Colorful file type icons
+- State persistence (localStorage)
+- Keyboard-friendly interactions
 
-```bash
-ng serve
-```
+## Features
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- Signal-based architecture (modern Angular)
+- Fully decoupled service layer (`TreeService`)
+- Professional Material Design icons with color coding
+- Inline creation and renaming (no modals)
+- Path-based creation support ready
+- Responsive and accessible tree structure
 
-## Code scaffolding
+## Tech Stack
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Angular 21
+- Angular Material + CDK (Drag & Drop)
+- Signals + Standalone Components
+- TypeScript
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Getting Started
 
 ```bash
-ng test
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+
+# Build for production
+npm run build
+
+# Run tests
+npm test
 ```
 
-## Running end-to-end tests
+## Project Structure
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+```
+src/app/
+├── file-tree/                 # Main recursive tree component
+├── services/
+│   ├── tree.service.ts        # Core business logic (add, delete, rename, move)
+│   ├── file.service.ts        # API + persistence layer
+│   └── icon.service.ts        # Professional icon mapping
+├── models/
+│   └── file-node.model.ts
+└── app.ts
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Demo
 
-## Additional Resources
+> A live demo will be available once deployed.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Future Improvements
+
+- Path syntax creation (`src/components/Button.tsx`)
+- Context menu (right-click)
+- Full keyboard navigation
+- Virtual scrolling for very large trees
+
+## License
+
+MIT
+
+---
+
+Built as a modern Angular file explorer component.

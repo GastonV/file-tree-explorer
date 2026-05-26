@@ -1,8 +1,16 @@
 <main class="main">
   <div class="tree-container">
-    <h1>{{ title }}</h1>
-    <p>File Tree Explorer with drag and drop (arbitrary depth supported)</p>
-    
+    <div class="header">
+      <h1>{{ title }}</h1>
+      
+      <div class="toolbar">
+        <button (click)="addRootNode('file')">+ New File</button>
+        <button (click)="addRootNode('folder')">+ New Folder</button>
+      </div>
+    </div>
+
+    <p class="subtitle">File Tree Explorer with drag and drop</p>
+
     @if (loading()) {
       <p>Loading tree...</p>
     } @else {
