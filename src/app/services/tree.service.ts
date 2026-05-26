@@ -32,7 +32,6 @@ export class TreeService {
     );
   }
 
-  // === Sorting: Folders first, then files (alphabetically within each) ===
   private sortTree(nodes: FileNode[]): FileNode[] {
     return nodes
       .map(node => {
@@ -63,8 +62,8 @@ export class TreeService {
     const sourceNode = this.findNodeById(nodes, sourceId);
     if (!sourceNode) return false;
 
-    const removeResult = this.removeNode(nodes, sourceId);
-    if (!removeResult) return false;
+    const removed = this.removeNode(nodes, sourceId);
+    if (!removed) return false;
 
     let targetChildren: FileNode[];
     if (!targetParentId) {
@@ -78,15 +77,11 @@ export class TreeService {
 
     targetChildren.splice(Math.max(0, Math.min(newIndex, targetChildren.length)), 0, sourceNode);
 
-    // Re-sort after move
     if (targetParentId) {
       const parent = this.findNodeById(nodes, targetParentId);
-      if (parent && parent.children) {
+      if (parent?.children) {
         parent.children = this.sortChildren(parent.children);
       }
-    } else {
-      // root level
-      // nodes array is already sorted below
     }
 
     this._nodes.set(this.sortTree(nodes));
@@ -104,11 +99,11 @@ export class TreeService {
 
   deleteNode(nodeId: string): boolean {
     const nodes = this.deepClone(this._nodes());
-    const success = this.removeNode(nodes, nodeId);
-    if (success) {
+    const deleted = this.removeNode(nodes, nodeId);
+    if (deleted) {
       this._nodes.set(this.sortTree(nodes));
     }
-    return success;
+    return deleted;
   }
 
   addNode(parentId: string | null, name: string, type: 'file' | 'folder'): boolean {
@@ -118,7 +113,7 @@ export class TreeService {
     const newNode: FileNode = {
       id: 'node-' + Date.now(),
       name: name.trim(),
-      type: type,
+      type,
       children: type === 'folder' ? [] : undefined,
       expanded: type === 'folder' ? true : undefined,
       extension: type === 'file' ? name.split('.').pop() : undefined
@@ -161,9 +156,9 @@ export class TreeService {
     return true;
   }
 
-  private findParent(nodes: FileNode[], childId: string, parent: FileNode | null = null): FileNode | null {
+  private findParent(nodes: FileNode[], childId: string, currentParent: FileNode | null = null): FileNode | null {
     for (const node of nodes) {
-      if (node.id === childId) return parent;
+      if (node.id === childId) return currentParent;
       if (node.children) {
         const found = this.findParent(node.children, childId, node);
         if (found) return found;

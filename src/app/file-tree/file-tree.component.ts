@@ -24,15 +24,12 @@ export class FileTreeComponent {
   renamingNodeId = signal<string | null>(null);
   renameValue = signal<string>('');
 
-  // Creating state
   creatingInParentId = signal<string | null>(null);
   creatingType = signal<'file' | 'folder' | null>(null);
   newItemName = signal<string>('');
 
-  // Selection
   selectedNodeId = signal<string | null>(null);
 
-  // Keyboard shortcuts
   @HostListener('document:keydown', ['$event'])
   handleKeyboardShortcuts(event: KeyboardEvent) {
     const selectedId = this.selectedNodeId();
@@ -169,7 +166,6 @@ export class FileTreeComponent {
     this.renameValue.set('');
   }
 
-  // Select node on single click
   selectNode(node: FileNode, event: Event) {
     event.stopPropagation();
     this.selectedNodeId.set(node.id);
