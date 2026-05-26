@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <p class="subtitle">File Tree Explorer with drag and drop</p>
+    <p class="subtitle">Modern file explorer with inline editing and drag & drop</p>
 
     @if (loading()) {
       <p>Loading tree...</p>
@@ -20,5 +20,11 @@
       </app-file-tree>
     }
   </div>
+
+  <!-- Floating Info Button -->
+  <button class="info-fab" (click)="showInfo()" title="About this demo">
+    ℹ️
+  </button>
+
   <router-outlet />
 </main>

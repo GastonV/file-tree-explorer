@@ -1,18 +1,19 @@
 .file-tree {
   font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
 }
 
 .tree-node {
   margin-left: 1rem;
   border-left: 1px solid #e0e0e0;
-  padding-left: 0.5rem;
+  padding-left: 0.75rem;
 }
 
 .node-content {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.5rem;
+  gap: 0.6rem;
+  padding: 0.35rem 0.6rem;
   cursor: grab;
   border-radius: 4px;
   transition: background 0.15s ease;
@@ -24,8 +25,8 @@
 
 .toggle {
   cursor: pointer;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.6rem;
+  height: 1.6rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -43,9 +44,9 @@
 }
 
 .icon {
-  font-size: 1.15rem;
-  width: 1.15rem;
-  height: 1.15rem;
+  font-size: 1.35rem;
+  width: 1.35rem;
+  height: 1.35rem;
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
@@ -58,41 +59,36 @@
 
 .extension {
   color: #666;
-  font-size: 0.82em;
+  font-size: 0.85em;
   font-family: ui-monospace, monospace;
 }
 
 .path {
   color: #888;
-  font-size: 0.72em;
+  font-size: 0.75em;
   margin-left: auto;
   font-family: ui-monospace, monospace;
 }
 
 .size {
   color: #999;
-  font-size: 0.72em;
-  margin-left: 0.25rem;
+  font-size: 0.75em;
+  margin-left: 0.3rem;
 }
 
 .actions {
   margin-left: auto;
   display: flex;
   gap: 4px;
-  opacity: 0.5;
-  transition: opacity 0.2s;
-}
-
-.node-content:hover .actions {
   opacity: 1;
 }
 
 .action-btn {
   background: none;
   border: none;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   cursor: pointer;
-  padding: 1px 5px;
+  padding: 2px 6px;
   border-radius: 4px;
   line-height: 1;
 
@@ -109,10 +105,10 @@
 .rename-input,
 .create-input {
   flex: 1;
-  padding: 2px 6px;
-  font-size: 0.95rem;
+  padding: 4px 8px;
+  font-size: 1rem;
   border: 1px solid #1976d2;
-  border-radius: 3px;
+  border-radius: 4px;
   outline: none;
   background: white;
 }
@@ -120,11 +116,11 @@
 .inline-create {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.5rem 0.25rem 2.5rem;
+  gap: 0.6rem;
+  padding: 0.35rem 0.6rem 0.35rem 3rem;
   margin-left: 1rem;
 }
 
 .children {
-  margin-left: 1.5rem;
+  margin-left: 1.75rem;
 }

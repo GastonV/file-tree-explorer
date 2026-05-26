@@ -1,5 +1,5 @@
 .tree-container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
   font-family: Inter, sans-serif;
@@ -37,4 +37,28 @@ h1 {
 .subtitle {
   color: #666;
   margin-bottom: 1rem;
+}
+
+/* Floating Info Button */
+.info-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #1976d2;
+  color: white;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: #1565c0;
+  }
 }

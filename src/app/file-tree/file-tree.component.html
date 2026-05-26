@@ -3,10 +3,11 @@
     <div 
       class="tree-node"
       role="treeitem"
+      [attr.data-folder-id]="node.type === 'folder' ? node.id : null"
       [attr.aria-expanded]="node.type === 'folder' ? node.expanded : null"
       cdkDropList
       [cdkDropListData]="node.children || []"
-      (cdkDropListDropped)="drop($event, node.type === 'folder' ? node.id : null)">
+      (cdkDropListDropped)="drop($event)">
       
       <div 
         class="node-content"
@@ -82,17 +83,19 @@
         </div>
       }
 
-      <!-- Children -->
-      @if (node.type === 'folder' && node.expanded && node.children) {
+      <!-- Children (always rendered for folders) -->
+      @if (node.type === 'folder') {
         <div class="children"
              role="group"
              cdkDropList
-             [cdkDropListData]="node.children"
-             (cdkDropListDropped)="drop($event, node.id)">
-          <app-file-tree 
-            [nodes]="node.children" 
-            (treeChanged)="treeChanged.emit()">
-          </app-file-tree>
+             [cdkDropListData]="node.children || []"
+             (cdkDropListDropped)="drop($event)">
+          @if (node.expanded && node.children) {
+            <app-file-tree 
+              [nodes]="node.children" 
+              (treeChanged)="treeChanged.emit()">
+            </app-file-tree>
+          }
         </div>
       }
     </div>

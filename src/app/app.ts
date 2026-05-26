@@ -1,18 +1,22 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
 import { TreeService } from './services/tree.service';
 import { FileTreeComponent } from './file-tree/file-tree.component';
+import { InfoDialogComponent } from './info-dialog/info-dialog.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, FileTreeComponent],
+  imports: [RouterOutlet, CommonModule, FileTreeComponent, MatDialogModule],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = 'file-tree-explorer';
+  protected readonly title = 'File Tree Explorer';
   private treeService = inject(TreeService);
+  private dialog = inject(MatDialog);
 
   nodes = this.treeService.nodes;
   loading = this.treeService.loading;
@@ -25,7 +29,6 @@ export class App {
     this.treeService.saveTree().subscribe();
   }
 
-  // Use the improved method from the tree component via service for now
   addRootNode(type: 'file' | 'folder') {
     const name = prompt(`Enter ${type} name:`);
     if (!name) return;
@@ -34,5 +37,12 @@ export class App {
     if (success) {
       this.treeService.saveTree().subscribe();
     }
+  }
+
+  showInfo() {
+    this.dialog.open(InfoDialogComponent, {
+      width: '400px',
+      maxWidth: '90vw'
+    });
   }
 }

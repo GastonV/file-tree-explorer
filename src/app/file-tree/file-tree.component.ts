@@ -29,12 +29,34 @@ export class FileTreeComponent {
   creatingType = signal<'file' | 'folder' | null>(null);
   newItemName = signal<string>('');
 
-  drop(event: CdkDragDrop<FileNode[]>, targetParentId: string | null = null) {
+  drop(event: CdkDragDrop<FileNode[]>) {
     const draggedNode = event.item.data as FileNode;
     if (!draggedNode) return;
 
-    const success = this.treeService.moveNode(draggedNode.id, targetParentId, event.currentIndex);
+    // Use pointer position to find the real target folder
+    const targetElement = document.elementFromPoint(
+      (event.event as MouseEvent).clientX,
+      (event.event as MouseEvent).clientY
+    );
+
+    const targetFolderId = this.findNearestFolderId(targetElement);
+
+    // Prevent dropping on self
+    if (targetFolderId === draggedNode.id) {
+      return;
+    }
+
+    const success = this.treeService.moveNode(draggedNode.id, targetFolderId, event.currentIndex);
     if (success) this.treeChanged.emit();
+  }
+
+  private findNearestFolderId(element: Element | null): string | null {
+    while (element) {
+      const folderId = element.getAttribute('data-folder-id');
+      if (folderId) return folderId;
+      element = element.parentElement;
+    }
+    return null;
   }
 
   toggleExpand(node: FileNode) {
@@ -51,7 +73,6 @@ export class FileTreeComponent {
     }
   }
 
-  // Start inline creation
   startCreating(parentId: string | null, type: 'file' | 'folder', event?: Event) {
     if (event) event.stopPropagation();
     this.creatingInParentId.set(parentId);
@@ -85,7 +106,6 @@ export class FileTreeComponent {
     this.newItemName.set('');
   }
 
-  // Rename
   startRename(node: FileNode, event?: Event) {
     if (event) event.stopPropagation();
     this.renamingNodeId.set(node.id);
