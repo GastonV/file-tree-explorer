@@ -43,30 +43,40 @@ describe('FileTreeComponent', () => {
     expect(compiled.textContent).toContain('style.css');
   });
 
-  it('should return correct icon object for folders and files via getFileIcon()', () => {
-    const folderIcon = component.getFileIcon(mockNodes[0]);
-    const fileIcon = component.getFileIcon(mockNodes[0].children![0]);
+  it('should select a node when clicked', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const folderElement = compiled.querySelector('.tree-node') as HTMLElement;
 
-    expect(folderIcon.icon).toBe('folder');
-    expect(fileIcon.icon).toBe('code');
-    expect(folderIcon.color).toBeDefined();
-    expect(fileIcon.color).toBeDefined();
+    folderElement.click();
+    fixture.detectChanges();
+
+    expect(component.selectedNodeId()).toBe('1');
   });
 
-  it('should return correct toggle icon based on expanded state', () => {
-    const expandedIcon = component.getToggleIcon(mockNodes[0]);
-    expect(expandedIcon).toBe('expand_more');
+  it('should trigger rename on F2 when a node is selected', () => {
+    component.selectedNodeId.set('1');
 
-    mockNodes[0].expanded = false;
-    const collapsedIcon = component.getToggleIcon(mockNodes[0]);
-    expect(collapsedIcon).toBe('chevron_right');
+    const event = new KeyboardEvent('keydown', { key: 'F2' });
+    document.dispatchEvent(event);
+
+    expect(component.renamingNodeId()).toBe('1');
   });
 
-  it('should emit treeChanged when called', () => {
-    const emitSpy = vi.fn();
-    component.treeChanged.subscribe(emitSpy);
+  it('should move selection down with ArrowDown', () => {
+    component.selectedNodeId.set('1');
 
-    component.treeChanged.emit();
-    expect(emitSpy).toHaveBeenCalled();
+    const event = new KeyboardEvent('keydown', { key: 'ArrowDown' });
+    document.dispatchEvent(event);
+
+    expect(component.selectedNodeId()).not.toBe('1');
+  });
+
+  it('should move selection up with ArrowUp', () => {
+    component.selectedNodeId.set('1-1');
+
+    const event = new KeyboardEvent('keydown', { key: 'ArrowUp' });
+    document.dispatchEvent(event);
+
+    expect(component.selectedNodeId()).toBe('1');
   });
 });

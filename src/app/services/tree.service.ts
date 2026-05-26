@@ -13,8 +13,20 @@ export class TreeService {
   readonly loading = signal(true);
   readonly lastUpdated = signal<string | null>(null);
 
-  loadTree(): Observable<FileNode[]> {
+  loadTree(useApi = false): Observable<FileNode[]> {
     this.loading.set(true);
+
+    if (useApi) {
+      return this.fileService.loadTreeFromEndpoint('regular').pipe(
+        tap((nodes) => {
+          const sorted = this.sortTree(nodes);
+          this._nodes.set(sorted);
+          this.loading.set(false);
+          this.lastUpdated.set(new Date().toISOString());
+        })
+      );
+    }
+
     return this.fileService.loadTree().pipe(
       tap((nodes) => {
         const sorted = this.sortTree(nodes);
@@ -110,13 +122,25 @@ export class TreeService {
     if (!name.trim()) return false;
 
     const nodes = this.deepClone(this._nodes());
+    
+    let extension: string | undefined = undefined;
+    
+    if (type === 'file') {
+      const trimmedName = name.trim();
+      if (trimmedName.includes('.')) {
+        extension = trimmedName.split('.').pop();
+      } else {
+        extension = 'txt';
+      }
+    }
+
     const newNode: FileNode = {
       id: 'node-' + Date.now(),
       name: name.trim(),
       type,
       children: type === 'folder' ? [] : undefined,
       expanded: type === 'folder' ? true : undefined,
-      extension: type === 'file' ? name.split('.').pop() : undefined
+      extension
     };
 
     if (!parentId) {

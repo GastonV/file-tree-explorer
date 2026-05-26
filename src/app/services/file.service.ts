@@ -7,11 +7,39 @@ import { FileNode, TreeState, ApiFilesResponse } from '../models/file-node.model
 @Injectable({ providedIn: 'root' })
 export class FileService {
   private http = inject(HttpClient);
-  private apiUrl = '/api/files';
+
+  // Base API URL (Cloudflare Worker)
+  private baseUrl = 'https://ab-file-explorer.athleticnext.workers.dev';
 
   /**
-   * Converts a flat list of file paths into a nested FileNode tree.
-   * Supports arbitrary depth and mixed files/folders at any level.
+   * Load tree from a specific endpoint (e.g. 'regular', 'another')
+   */
+  loadTreeFromEndpoint(file: string = 'regular'): Observable<FileNode[]> {
+    const url = `${this.baseUrl}/?file=${file}`;
+
+    return this.http.get<FileNode[] | ApiFilesResponse>(url).pipe(
+      map((response) => {
+        if (Array.isArray(response)) {
+          return response;
+        }
+        if (response && Array.isArray(response.filepaths)) {
+          return this.buildTreeFromPaths(response.filepaths);
+        }
+        return this.getSampleData();
+      }),
+      catchError(() => of(this.getSampleData()))
+    );
+  }
+
+  /**
+   * Default load (uses 'regular' endpoint)
+   */
+  loadTree(): Observable<FileNode[]> {
+    return this.loadTreeFromEndpoint('regular');
+  }
+
+  /**
+   * Converts flat file paths into nested FileNode tree
    */
   buildTreeFromPaths(filepaths: string[]): FileNode[] {
     const root: FileNode[] = [];
@@ -76,31 +104,6 @@ export class FileService {
         size: 1470
       }
     ];
-  }
-
-  loadTree(): Observable<FileNode[]> {
-    const stored = localStorage.getItem('file-tree-state');
-    if (stored) {
-      try {
-        const state: TreeState = JSON.parse(stored);
-        if (state.nodes && state.nodes.length > 0) {
-          return of(state.nodes);
-        }
-      } catch {}
-    }
-
-    return this.http.get<FileNode[] | ApiFilesResponse>(this.apiUrl).pipe(
-      map((response) => {
-        if (Array.isArray(response)) {
-          return response;
-        }
-        if (response && Array.isArray(response.filepaths)) {
-          return this.buildTreeFromPaths(response.filepaths);
-        }
-        return this.getSampleData();
-      }),
-      catchError(() => of(this.getSampleData()))
-    );
   }
 
   saveTree(nodes: FileNode[]): Observable<TreeState> {

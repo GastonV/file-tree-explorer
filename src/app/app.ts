@@ -37,6 +37,11 @@ export class App {
     }
   }
 
+  // Load fresh data from the real API (bypasses localStorage)
+  loadFromApi() {
+    this.treeService.loadTree(true).subscribe();
+  }
+
   showInfo() {
     this.dialog.open(InfoDialogComponent, {
       width: '400px',

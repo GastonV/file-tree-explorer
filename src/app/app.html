@@ -6,6 +6,12 @@
       <div class="toolbar">
         <button (click)="addRootNode('file')">+ New File</button>
         <button (click)="addRootNode('folder')">+ New Folder</button>
+        <button 
+          (click)="loadFromApi()" 
+          class="api-btn"
+          [disabled]="loading()">
+          {{ loading() ? 'Loading...' : 'Load from API' }}
+        </button>
       </div>
     </div>
 

@@ -32,6 +32,16 @@ h1 {
       background: #f5f5f5;
     }
   }
+
+  .api-btn {
+    background: #1976d2;
+    color: white;
+    border-color: #1976d2;
+
+    &:hover {
+      background: #1565c0;
+    }
+  }
 }
 
 .subtitle {

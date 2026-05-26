@@ -23,6 +23,7 @@
           *ngIf="node.type === 'folder'" 
           class="toggle"
           (click)="toggleExpand(node); $event.stopPropagation()"
+          (dblclick)="$event.stopPropagation()"
           [attr.aria-label]="node.expanded ? 'Collapse folder' : 'Expand folder'">
           <mat-icon>{{ getToggleIcon(node) }}</mat-icon>
         </button>
@@ -70,7 +71,7 @@
       </div>
 
       <!-- Inline Creation Input -->
-      @if (creatingInParentId() === node.id) {
+      @if (creatingInParentId() !== null && creatingInParentId() === node.id) {
         <div class="inline-create">
           <mat-icon class="icon">{{ creatingType() === 'folder' ? 'folder' : 'insert_drive_file' }}</mat-icon>
           <input 
@@ -85,7 +86,7 @@
         </div>
       }
 
-      <!-- Children (always rendered for folders) -->
+      <!-- Children -->
       @if (node.type === 'folder') {
         <div class="children"
              role="group"
