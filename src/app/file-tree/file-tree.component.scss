@@ -23,6 +23,11 @@
   }
 }
 
+.tree-node.selected .node-content {
+  background: #e3f2fd;
+  border-radius: 4px;
+}
+
 .toggle {
   cursor: pointer;
   width: 1.6rem;

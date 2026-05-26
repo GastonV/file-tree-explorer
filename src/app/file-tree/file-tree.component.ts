@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, inject, input, output, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { MatIconModule } from '@angular/material/icon';
@@ -29,11 +29,49 @@ export class FileTreeComponent {
   creatingType = signal<'file' | 'folder' | null>(null);
   newItemName = signal<string>('');
 
+  // Selection
+  selectedNodeId = signal<string | null>(null);
+
+  // Keyboard shortcuts
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardShortcuts(event: KeyboardEvent) {
+    const selectedId = this.selectedNodeId();
+
+    if (event.key === 'F2' && selectedId) {
+      event.preventDefault();
+      const node = this.findNodeById(this.nodes(), selectedId);
+      if (node) this.startRename(node);
+    }
+
+    if (event.key === 'Delete' && selectedId) {
+      event.preventDefault();
+      const node = this.findNodeById(this.nodes(), selectedId);
+      if (node) {
+        if (confirm(`Delete "${node.name}"?`)) {
+          if (this.treeService.deleteNode(selectedId)) {
+            this.treeChanged.emit();
+            this.selectedNodeId.set(null);
+          }
+        }
+      }
+    }
+  }
+
+  private findNodeById(nodes: FileNode[], id: string): FileNode | null {
+    for (const node of nodes) {
+      if (node.id === id) return node;
+      if (node.children) {
+        const found = this.findNodeById(node.children, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
   drop(event: CdkDragDrop<FileNode[]>) {
     const draggedNode = event.item.data as FileNode;
     if (!draggedNode) return;
 
-    // Use pointer position to find the real target folder
     const targetElement = document.elementFromPoint(
       (event.event as MouseEvent).clientX,
       (event.event as MouseEvent).clientY
@@ -41,10 +79,7 @@ export class FileTreeComponent {
 
     const targetFolderId = this.findNearestFolderId(targetElement);
 
-    // Prevent dropping on self
-    if (targetFolderId === draggedNode.id) {
-      return;
-    }
+    if (targetFolderId === draggedNode.id) return;
 
     const success = this.treeService.moveNode(draggedNode.id, targetFolderId, event.currentIndex);
     if (success) this.treeChanged.emit();
@@ -69,6 +104,7 @@ export class FileTreeComponent {
     if (confirm(`Delete "${node.name}"?`)) {
       if (this.treeService.deleteNode(node.id)) {
         this.treeChanged.emit();
+        if (this.selectedNodeId() === node.id) this.selectedNodeId.set(null);
       }
     }
   }
@@ -110,6 +146,7 @@ export class FileTreeComponent {
     if (event) event.stopPropagation();
     this.renamingNodeId.set(node.id);
     this.renameValue.set(node.name);
+    this.selectedNodeId.set(node.id);
   }
 
   saveRename() {
@@ -130,6 +167,12 @@ export class FileTreeComponent {
   cancelRename() {
     this.renamingNodeId.set(null);
     this.renameValue.set('');
+  }
+
+  // Select node on single click
+  selectNode(node: FileNode, event: Event) {
+    event.stopPropagation();
+    this.selectedNodeId.set(node.id);
   }
 
   getFileIcon(node: FileNode) {

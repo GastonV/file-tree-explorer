@@ -17,7 +17,8 @@ export class TreeService {
     this.loading.set(true);
     return this.fileService.loadTree().pipe(
       tap((nodes) => {
-        this._nodes.set(this.deepClone(nodes));
+        const sorted = this.sortTree(nodes);
+        this._nodes.set(sorted);
         this.loading.set(false);
         this.lastUpdated.set(new Date().toISOString());
       })
@@ -29,6 +30,32 @@ export class TreeService {
     return this.fileService.saveTree(this.deepClone(current)).pipe(
       tap((state) => this.lastUpdated.set(state.lastUpdated))
     );
+  }
+
+  // === Sorting: Folders first, then files (alphabetically within each) ===
+  private sortTree(nodes: FileNode[]): FileNode[] {
+    return nodes
+      .map(node => {
+        if (node.children) {
+          node.children = this.sortTree(node.children);
+        }
+        return node;
+      })
+      .sort((a, b) => {
+        if (a.type === b.type) {
+          return a.name.localeCompare(b.name);
+        }
+        return a.type === 'folder' ? -1 : 1;
+      });
+  }
+
+  private sortChildren(children: FileNode[]): FileNode[] {
+    return [...children].sort((a, b) => {
+      if (a.type === b.type) {
+        return a.name.localeCompare(b.name);
+      }
+      return a.type === 'folder' ? -1 : 1;
+    });
   }
 
   moveNode(sourceId: string, targetParentId: string | null, newIndex: number): boolean {
@@ -50,7 +77,19 @@ export class TreeService {
     }
 
     targetChildren.splice(Math.max(0, Math.min(newIndex, targetChildren.length)), 0, sourceNode);
-    this._nodes.set(nodes);
+
+    // Re-sort after move
+    if (targetParentId) {
+      const parent = this.findNodeById(nodes, targetParentId);
+      if (parent && parent.children) {
+        parent.children = this.sortChildren(parent.children);
+      }
+    } else {
+      // root level
+      // nodes array is already sorted below
+    }
+
+    this._nodes.set(this.sortTree(nodes));
     return true;
   }
 
@@ -67,7 +106,7 @@ export class TreeService {
     const nodes = this.deepClone(this._nodes());
     const success = this.removeNode(nodes, nodeId);
     if (success) {
-      this._nodes.set(nodes);
+      this._nodes.set(this.sortTree(nodes));
     }
     return success;
   }
@@ -93,9 +132,10 @@ export class TreeService {
       parent.children = parent.children || [];
       parent.children.push(newNode);
       parent.expanded = true;
+      parent.children = this.sortChildren(parent.children);
     }
 
-    this._nodes.set(nodes);
+    this._nodes.set(this.sortTree(nodes));
     return true;
   }
 
@@ -117,7 +157,7 @@ export class TreeService {
       node.extension = trimmedName.includes('.') ? trimmedName.split('.').pop() : undefined;
     }
 
-    this._nodes.set(nodes);
+    this._nodes.set(this.sortTree(nodes));
     return true;
   }
 

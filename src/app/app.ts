@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -18,6 +18,8 @@ export class App {
   private treeService = inject(TreeService);
   private dialog = inject(MatDialog);
 
+  @ViewChild(FileTreeComponent) fileTree!: FileTreeComponent;
+
   nodes = this.treeService.nodes;
   loading = this.treeService.loading;
 
@@ -30,12 +32,8 @@ export class App {
   }
 
   addRootNode(type: 'file' | 'folder') {
-    const name = prompt(`Enter ${type} name:`);
-    if (!name) return;
-
-    const success = this.treeService.addNode(null, name, type);
-    if (success) {
-      this.treeService.saveTree().subscribe();
+    if (this.fileTree) {
+      this.fileTree.startCreating(null, type);
     }
   }
 

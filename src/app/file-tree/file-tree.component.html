@@ -5,9 +5,11 @@
       role="treeitem"
       [attr.data-folder-id]="node.type === 'folder' ? node.id : null"
       [attr.aria-expanded]="node.type === 'folder' ? node.expanded : null"
+      [class.selected]="selectedNodeId() === node.id"
       cdkDropList
       [cdkDropListData]="node.children || []"
-      (cdkDropListDropped)="drop($event)">
+      (cdkDropListDropped)="drop($event)"
+      (click)="selectNode(node, $event)">
       
       <div 
         class="node-content"
@@ -20,7 +22,7 @@
         <button 
           *ngIf="node.type === 'folder'" 
           class="toggle"
-          (click)="toggleExpand(node)"
+          (click)="toggleExpand(node); $event.stopPropagation()"
           [attr.aria-label]="node.expanded ? 'Collapse folder' : 'Expand folder'">
           <mat-icon>{{ getToggleIcon(node) }}</mat-icon>
         </button>
